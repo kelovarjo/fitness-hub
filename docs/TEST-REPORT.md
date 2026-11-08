@@ -1,4 +1,6 @@
-# Test report: Phase 1a (8 Nov 2026)
+# Test report: Phase 1a (8 Nov 2026, updated after first use)
+
+Update: focus-mode workout screen (one exercise at a time, full-screen rest, Easy / Good / Max effort) and the tappable body map. 62 tests passing; focus flow and body map checked at iPhone size with no errors.
 
 ## Automated tests: 61 passing (`npm test`)
 
@@ -45,4 +47,4 @@ Production build served locally, Chromium with the iPhone 13 viewport (Playwrigh
 - Data lives on one phone until a sync backend is added. Weekly export is the only protection against loss.
 - No rest alert when the phone is locked (web apps cannot do this without push notifications).
 - Exercise cues are AI drafts until you mark them reviewed.
-- Muscle anatomy diagram is planned for Phase 1b; the library is a searchable list for now.
+- Body map is a simplified drawing; regions are approximate, not medical anatomy.

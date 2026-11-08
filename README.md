@@ -17,13 +17,13 @@ All data is stored in the browser's IndexedDB on your phone. Nothing is sent to 
 | Task | Where |
 | --- | --- |
 | Start the suggested session | Today, **Start** |
-| Log a set | Adjust with − / +, pick RIR, tap **Log set** |
-| Dictate a set | Tap the quick-entry box, use the keyboard microphone ("32 kilograms for 10 reps"), tap **Fill**, check, **Log set** |
-| Equipment busy | **Swap** on the exercise, tap the busy equipment, pick a ranked alternative |
-| Edit or delete a logged set | Tap the set chip |
-| Skip, add or remove sets, exercise cues | **⋯** on the exercise |
-| Reorder | ↑ ↓ on the block header |
-| Pause, discard | **⋯** at the top right of the session |
+| Log a set | Weight and reps are prefilled. Adjust if needed, tap **Done** |
+| Effort | Easy / Good / Max under the numbers. Good is the default |
+| Equipment busy | **Busy? Swap**, pick the first option |
+| Edit or delete a logged set | Tap the ✓ chip under the numbers |
+| Jump to or reorder exercises, skip | **Plan** at the top |
+| Dictate a set, tips, more or fewer sets, pause, finish | **⋯** at the top |
+| Find exercises by muscle | Train, **Muscles**, tap the body |
 | Back up | Settings, **Export backup**, save to Files or iCloud Drive |
 | Gym equipment and weight steps | Settings, **Gym equipment** |
 | Phase dates | Settings, **Program phases** |

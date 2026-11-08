@@ -8,6 +8,7 @@ import { suggest } from './progression';
 import { canDo, muscleScore, rankSubstitutes } from './substitution';
 import { parseSetEntry, wordsToDigits } from './parser';
 import { applyPhase, nextTemplate, phaseForDate, toSessionBlocks } from './plan';
+import { feelToRir } from './effort';
 import { activeDurationMs, nextSet, restAfter, summarize } from './session';
 
 const equipMap = (overrides: Partial<Record<EquipmentId, Partial<Equipment>>> = {}) =>
@@ -323,5 +324,19 @@ describe('session flow', () => {
     expect(sum.totalReps).toBe(40);
     expect(sum.setsByMuscle.chest_mid).toBe(2);
     expect(EXERCISE_BY_ID.push_up.loadType).toBe('bodyweight');
+  });
+});
+
+describe('effort words', () => {
+  it('maps Easy, Good and Max to reps in reserve that drive progression correctly', () => {
+    expect(feelToRir('max', { rirMax: 2 })).toBe(0);
+    expect(feelToRir('good', { rirMax: 2 })).toBe(2);
+    expect(feelToRir('good', { rirMax: 1 })).toBe(1);
+    expect(feelToRir('easy', { rirMax: 1 })).toBe(3);
+    // "Good" at the top of the range allows a weight increase; "Max" does not when target RIR is 1+.
+    const base = { loadType: 'dumbbell' as const, repMin: 15, repMax: 20, rirMin: 1, sets: 2, step: 2.5 };
+    const at = (rir: number) => [[{ weightKg: 30, reps: 20, rir }, { weightKg: 30, reps: 20, rir }]];
+    expect(suggest({ ...base, history: at(feelToRir('good', { rirMax: 1 })) }).kind).toBe('increase');
+    expect(suggest({ ...base, history: at(feelToRir('max', { rirMax: 1 })) }).kind).toBe('reps');
   });
 });

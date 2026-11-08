@@ -1,54 +1,99 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { db } from '../db';
-import { EXERCISES, MUSCLE_LABEL, PATTERN_LABEL, getExercise } from '../data/exercises';
+import { EXERCISES, EXERCISE_BY_ID, MUSCLE_LABEL, PATTERN_LABEL, getExercise } from '../data/exercises';
+import BodyMap from '../components/BodyMap';
+import type { MuscleId } from '../types';
 import { DEFAULT_EQUIPMENT } from '../data/equipment';
 import { e1rm } from '../logic/strength';
 import * as store from '../store';
-import { Badge, Button, Card, Header, fmtDate, fmtKg } from '../ui';
+import { Badge, Button, Card, Header, cx, fmtDate, fmtKg } from '../ui';
 
 const EQ_NAME = Object.fromEntries(DEFAULT_EQUIPMENT.map((e) => [e.id, e.name]));
 const PROFILE = { L: 'Hardest when stretched', M: 'Hardest mid-range', S: 'Hardest when contracted' };
 
 export default function Library() {
+  const [mode, setMode] = useState<'map' | 'list'>(() => (sessionStorage.getItem('libMode') as 'map' | 'list') || 'map');
+  const [view, setView] = useState<'front' | 'back'>(() => (sessionStorage.getItem('libView') as 'front' | 'back') || 'front');
+  const [muscle, setMuscle] = useState<MuscleId | null>(() => (sessionStorage.getItem('libMuscle') as MuscleId) || null);
   const [q, setQ] = useState('');
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('libMode', mode);
+      sessionStorage.setItem('libView', view);
+      if (muscle) sessionStorage.setItem('libMuscle', muscle);
+    } catch { /* ignore */ }
+  }, [mode, view, muscle]);
   const meta = useLiveQuery(() => db.exerciseMeta.toArray(), []);
   const metaBy = new Map(meta?.map((m) => [m.exerciseId, m]));
+  const worked = useLiveQuery(async () => {
+    const sets = await db.sets.where('completedAt').above(Date.now() - 7 * 86400000).toArray();
+    const out: Partial<Record<MuscleId, number>> = {};
+    sets.forEach((s) => EXERCISE_BY_ID[s.exerciseId]?.primary.forEach((m) => (out[m] = (out[m] ?? 0) + 1)));
+    return out;
+  }, []);
+  const intensity = Object.fromEntries(Object.entries(worked ?? {}).map(([k, v]) => [k, (v ?? 0) / 12]));
+
+  const row = (e: (typeof EXERCISES)[number]) => {
+    const m = metaBy.get(e.id);
+    return (
+      <a key={e.id} href={`#/library/${e.id}`} className="flex min-h-14 items-center justify-between gap-2 px-4 py-2">
+        <span>
+          <span className="block">{e.name}</span>
+          <span className="text-xs text-mute">{e.primary.map((x) => MUSCLE_LABEL[x]).join(', ')}</span>
+        </span>
+        <span className="flex shrink-0 items-center gap-1 text-mute">
+          {m?.excluded && <Badge tone="bad">Hidden</Badge>}›
+        </span>
+      </a>
+    );
+  };
+
+  const primary = muscle ? EXERCISES.filter((e) => e.primary.includes(muscle)) : [];
+  const secondary = muscle ? EXERCISES.filter((e) => !e.primary.includes(muscle) && e.secondary.includes(muscle)) : [];
   const filtered = EXERCISES.filter((e) =>
     !q || e.name.toLowerCase().includes(q.toLowerCase()) || [...e.primary, ...e.secondary].some((m) => MUSCLE_LABEL[m].toLowerCase().includes(q.toLowerCase())));
-  const groups = new Map<string, typeof EXERCISES>();
-  filtered.forEach((e) => groups.set(e.pattern, [...(groups.get(e.pattern) ?? []), e]));
-  const reviewed = meta?.filter((m) => m.reviewed).length ?? 0;
+
   return (
     <>
-      <Header title="Exercises" back="#/train" />
-      <div className="p-4">
-        <p className="mb-3 text-sm text-mute">{EXERCISES.length} exercises · {reviewed} reviewed. Cues are AI drafts until you mark them reviewed.</p>
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name or muscle" aria-label="Search exercises"
-          className="mb-4 min-h-12 w-full rounded-xl border border-line bg-panel px-3" />
-        {[...groups.entries()].map(([pattern, list]) => (
-          <div key={pattern} className="mb-4">
-            <h2 className="mb-1 text-xs uppercase tracking-wide text-mute">{PATTERN_LABEL[pattern]}</h2>
-            <div className="divide-y divide-line rounded-2xl border border-line bg-panel">
-              {list.map((e) => {
-                const m = metaBy.get(e.id);
-                return (
-                  <a key={e.id} href={`#/library/${e.id}`} className="flex min-h-14 items-center justify-between gap-2 px-4 py-2">
-                    <span>
-                      <span className="block">{e.name}</span>
-                      <span className="text-xs text-mute">{e.primary.map((x) => MUSCLE_LABEL[x]).join(', ')}</span>
-                    </span>
-                    <span className="flex shrink-0 gap-1">
-                      {m?.excluded && <Badge tone="bad">Never suggest</Badge>}
-                      {m?.reviewed ? <Badge tone="good">Reviewed</Badge> : <Badge>Draft</Badge>}
-                    </span>
-                  </a>
-                );
-              })}
+      <Header title="Muscles" back="#/train" right={
+        <div className="flex rounded-full bg-panel2 p-1 text-sm">
+          {(['map', 'list'] as const).map((m) => (
+            <button key={m} onClick={() => setMode(m)} className={cx('min-h-9 rounded-full px-3', mode === m ? 'bg-ink text-bg font-semibold' : 'text-mute')}>{m === 'map' ? 'Body' : 'List'}</button>
+          ))}
+        </div>
+      } />
+      {mode === 'map' ? (
+        <div className="p-4">
+          <div className="mb-2 flex justify-center">
+            <div className="flex rounded-full bg-panel2 p-1 text-sm">
+              {(['front', 'back'] as const).map((v) => (
+                <button key={v} onClick={() => setView(v)} className={cx('min-h-10 rounded-full px-5', view === v ? 'bg-ink text-bg font-semibold' : 'text-mute')}>{v === 'front' ? 'Front' : 'Back'}</button>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
+          <BodyMap view={view} selected={muscle} onSelect={setMuscle} worked={intensity} />
+          <p className="mt-1 text-center text-xs text-mute">Tap a muscle. Orange tint = sets in the last 7 days.</p>
+          {muscle && (
+            <div className="mt-4" id="muscle-exercises">
+              <h2 className="mb-2 text-xl font-semibold">{MUSCLE_LABEL[muscle]} <span className="text-sm font-normal text-mute">· {worked?.[muscle] ?? 0} sets this week</span></h2>
+              <div className="divide-y divide-line rounded-2xl border border-line bg-panel">{primary.map(row)}</div>
+              {secondary.length > 0 && (
+                <>
+                  <h3 className="mb-1 mt-4 text-xs uppercase tracking-wide text-mute">Also works it</h3>
+                  <div className="divide-y divide-line rounded-2xl border border-line bg-panel">{secondary.map(row)}</div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="p-4">
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name or muscle" aria-label="Search exercises"
+            className="mb-4 min-h-12 w-full rounded-xl border border-line bg-panel px-3" />
+          <div className="divide-y divide-line rounded-2xl border border-line bg-panel">{filtered.map(row)}</div>
+        </div>
+      )}
     </>
   );
 }

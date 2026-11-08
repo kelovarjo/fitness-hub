@@ -33,7 +33,13 @@ export const db = new FitnessDB();
 export async function ensureSeeded(database: FitnessDB = db): Promise<void> {
   const now = Date.now();
   await database.transaction('rw', database.equipment, database.phases, async () => {
-    const existing = new Set((await database.equipment.toArray()).map((e) => e.id));
+    const rows = await database.equipment.toArray();
+    const existing = new Set(rows.map((e) => e.id));
+    // Keep display names in step with app updates; never touch the user's availability or steps.
+    for (const r of rows) {
+      const def = DEFAULT_EQUIPMENT.find((d) => d.id === r.id);
+      if (def && def.name !== r.name) await database.equipment.update(r.id, { name: def.name });
+    }
     const missing = DEFAULT_EQUIPMENT.filter((e) => !existing.has(e.id)).map((e) => ({ ...e, updatedAt: now }));
     if (missing.length) await database.equipment.bulkAdd(missing);
     if ((await database.phases.count()) === 0) {

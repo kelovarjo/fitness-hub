@@ -109,7 +109,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastCtx.Provider value={push}>
       {children}
-      <div className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] z-[60] flex flex-col items-center gap-2 px-4">
+      <div className="pointer-events-none fixed inset-x-0 top-[calc(env(safe-area-inset-top)+4.25rem)] z-[60] flex flex-col items-center gap-2 px-4">
         {items.map((t) => (
           <div key={t.id} role="status"
             className={cx('pointer-events-auto flex w-full max-w-md items-center justify-between gap-3 rounded-xl border px-4 py-2 shadow-lg',

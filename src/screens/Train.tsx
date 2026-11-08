@@ -30,7 +30,7 @@ export default function Train() {
       <div className="space-y-3 p-4">
         <div className="grid grid-cols-2 gap-3">
           <a href="#/history" className="rounded-2xl border border-line bg-panel p-4 font-semibold">History ›</a>
-          <a href="#/library" className="rounded-2xl border border-line bg-panel p-4 font-semibold">Exercises ›</a>
+          <a href="#/library" className="rounded-2xl border border-line bg-panel p-4 font-semibold">Muscles ›</a>
         </div>
         {phase && <p className="text-sm text-mute">Templates below are adjusted for <b className="text-ink">{phase.name}</b>.</p>}
         {TEMPLATES.map((t) => {

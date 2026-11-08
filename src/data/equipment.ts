@@ -8,7 +8,7 @@ export const DEFAULT_EQUIPMENT: Seed[] = [
   { id: 'barbell', name: 'Barbell and plates', available: true, increment: 2.5 },
   { id: 'rack', name: 'Power or squat rack', available: true, increment: 0 },
   { id: 'bench', name: 'Adjustable bench', available: true, increment: 0 },
-  { id: 'dumbbells', name: 'Dumbbells (kg per dumbbell)', available: true, increment: 2.5, maxKg: 40 },
+  { id: 'dumbbells', name: 'Dumbbells', available: true, increment: 2.5, maxKg: 40 },
   { id: 'ez_bar', name: 'EZ bar', available: true, increment: 2.5 },
   { id: 'smith', name: 'Smith machine', available: true, increment: 2.5 },
   { id: 'cable', name: 'Dual adjustable cable station', available: true, increment: 5 },
