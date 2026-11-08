@@ -1,0 +1,53 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-bg: #0b0d10;
+  --color-panel: #14181d;
+  --color-panel2: #1c2128;
+  --color-line: #2a313a;
+  --color-ink: #f2f4f7;
+  --color-mute: #9aa4b2;
+  --color-accent: #ff7a1a;
+  --color-good: #3ccf8e;
+  --color-warn: #f5c04a;
+  --color-bad: #ff5d5d;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+input,
+textarea,
+select {
+  font-size: 16px; /* prevents iOS zoom on focus */
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
