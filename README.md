@@ -23,7 +23,7 @@ All data is stored in the browser's IndexedDB on your phone. Nothing is sent to 
 | Edit or delete a logged set | Tap the ✓ chip under the numbers |
 | Jump to or reorder exercises, skip | **Plan** at the top |
 | Dictate a set, tips, more or fewer sets, pause, finish | **⋯** at the top |
-| Find exercises by muscle | Train, **Muscles**, tap the body |
+| Find exercises by muscle | **Muscles** tab, tap the body |
 | Back up | Settings, **Export backup**, save to Files or iCloud Drive |
 | Gym equipment and weight steps | Settings, **Gym equipment** |
 | Phase dates | Settings, **Program phases** |

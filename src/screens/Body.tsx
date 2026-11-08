@@ -88,7 +88,7 @@ export default function Body() {
 
   return (
     <>
-      <Header title="Body" />
+      <Header title="Measurements" />
       <div className="space-y-4 p-4">
         <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1" role="tablist">
           {METRICS.map((m) => (

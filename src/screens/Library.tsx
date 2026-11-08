@@ -56,7 +56,7 @@ export default function Library() {
 
   return (
     <>
-      <Header title="Muscles" back="#/train" right={
+      <Header title="Muscles" right={
         <div className="flex rounded-full bg-panel2 p-1 text-sm">
           {(['map', 'list'] as const).map((m) => (
             <button key={m} onClick={() => setMode(m)} className={cx('min-h-9 rounded-full px-3', mode === m ? 'bg-ink text-bg font-semibold' : 'text-mute')}>{m === 'map' ? 'Body' : 'List'}</button>

@@ -26,7 +26,8 @@ function useHash() {
 const TABS = [
   { href: '#/today', label: 'Today', icon: '◎' },
   { href: '#/train', label: 'Train', icon: '▤' },
-  { href: '#/body', label: 'Body', icon: '◍' },
+  { href: '#/library', label: 'Muscles', icon: '✦' },
+  { href: '#/body', label: 'Measure', icon: '◍' },
   { href: '#/settings', label: 'Settings', icon: '⚙' },
 ];
 
@@ -58,9 +59,9 @@ export default function App() {
               <span>{active.templateName} in progress</span><span>Resume ›</span>
             </a>
           )}
-          <div className="mx-auto grid max-w-lg grid-cols-4">
+          <div className="mx-auto grid max-w-lg grid-cols-5">
             {TABS.map((t) => {
-              const on = hash.startsWith(t.href) || (t.href === '#/train' && /^#\/(history|library)/.test(hash));
+              const on = hash.startsWith(t.href) || (t.href === '#/train' && /^#\/history/.test(hash));
               return (
                 <a key={t.href} href={t.href} className={cx('flex min-h-[64px] flex-col items-center justify-center gap-0.5 text-xs', on ? 'text-accent' : 'text-mute')}>
                   <span className="text-xl leading-none" aria-hidden>{t.icon}</span>
